@@ -1,40 +1,36 @@
-
-pipeline{
-
-	agent any
-
-	environment {
-		DOCKERHUB_CREDENTIALS=credentials('dockerhub-cred-raja')
-	}
-
-	stages {
-
-		stage('Build') {
-
-			steps {
-				sh 'docker build -t paulmercer\web-app .'
-			}
-		}
-
-		stage('Login') {
-
-			steps {
-				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-			}
-		}
-
-		stage('Push') {
-
-			steps {
-				sh 'docker push paulmercer\web-app'
-			}
-		}
-	}
-
-	post {
-		always {
-			sh 'docker logout'
-		}
-	}
-
+pipeline {
+environment {
+registry = "paulmercer/web-app"
+registryCredential = 'paulmercer'
+dockerImage = ''
+}
+agent any
+stages {
+stage('Cloning our Git') {
+steps {
+git 'https://github.com/PaulMercer1/project-pyweb.git'
+}
+}
+stage('Building our image') {
+steps{
+script {
+dockerImage = docker.build registry + ":$BUILD_NUMBER"
+}
+}
+}
+stage('Deploy our image') {
+steps{
+script {
+docker.withRegistry( '', registryCredential ) {
+dockerImage.push()
+}
+}
+}
+}
+stage('Cleaning up') {
+steps{
+sh "docker rmi $registry:$BUILD_NUMBER"
+}
+}
+}
 }
