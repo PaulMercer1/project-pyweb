@@ -6,11 +6,7 @@ dockerImage = ''
 }
 agent any
 stages {
-stage('Cloning our Git') {
-steps {
-git 'https://github.com/PaulMercer1/project-pyweb.git'
-}
-}
+
 stage('Building our image') {
 steps{
 script {
