@@ -12,7 +12,7 @@ pipeline{
 		stage('Build') {
 
 			steps {
-				sh 'docker build -t <docker id>\web-app .'
+				sh 'docker build -t paulmercer\web-app .'
 			}
 		}
 
@@ -26,7 +26,7 @@ pipeline{
 		stage('Push') {
 
 			steps {
-				sh 'docker push <docker id>\web-app'
+				sh 'docker push paulmercer\web-app'
 			}
 		}
 	}
